@@ -1,0 +1,5 @@
+${CONFIG_REGISTER_MANAGER}/src/rtl/axi/axi4lite_2_master_intf.sv
+${CONFIG_REGISTER_MANAGER}/src/rtl/axi/axi4lite_2_reg_intf.sv
+${CONFIG_REGISTER_MANAGER}/src/rtl/axi/axi4lite_template.sv
+${CONFIG_REGISTER_MANAGER}/build/rtl/axi4lite_at.srclist
+${CONFIG_REGISTER_MANAGER}/tests/axi4lite_tb.sv

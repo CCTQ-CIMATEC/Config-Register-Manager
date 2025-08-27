@@ -1,2 +1,7 @@
 build/*
-build/rtl_out/*
+build/csv/*
+build/ipxact/*
+build/rtl/*
+!.gitkeep
+tools/__pycache__/*
+tools/utils/__pycache__/*

@@ -1,0 +1,5 @@
+${CONFIG_REGISTER_MANAGER}/src/rtl/apb/apb4_2_master_intf.sv
+${CONFIG_REGISTER_MANAGER}/src/rtl/apb/apb4_2_reg_intf.sv
+${CONFIG_REGISTER_MANAGER}/src/rtl/apb/apb4_template.sv
+${CONFIG_REGISTER_MANAGER}/build/rtl/apb4_at.srclist
+${CONFIG_REGISTER_MANAGER}/tests/apb4_tb.sv

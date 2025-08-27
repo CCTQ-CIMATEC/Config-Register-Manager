@@ -36,7 +36,7 @@ IP-B & IP\_B description & 0x4000\_1000  & \ref{table:IP-B} \\ \hline
 \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
 \hline
 \textbf{Register} & \textbf{Offset} & \textbf{Field} & \textbf{Bits} & \textbf{Access\_Policy} & \textbf{Volatile} & \textbf{reset} & \textbf{Description} & \textbf{Enum Values} \\ \hline
-\multirow{6}{*}{CTRL} & \multirow{6}{*}{0x0000} & PRESCALER & [1:0]  & RW  & false & 'h0  & Controls & 0:100Hz; 1:500Hz       \\ \cline{3-9}
+\multirow{6}{*}{CTRL} & \multirow{6}{*}{0x0000} & PRESCALER & [1:0]  & RW  & false & 'h0  & Controls & 0:v_100Hz; 1:v_500Hz       \\ \cline{3-9}
         &        & MODE      & [3:2]  & RW  & false & 'h0  & Select   & 0:Mode\_A; 1:Mode\_B   \\ \cline{3-9}
         &        & MASTER    & [4]    & RW  & true  & 'h0  & Selects  &                        \\ \cline{3-9}
         &        & DORD      & [5]    & RW  & false & 'h0  & Dord d   &                        \\ \cline{3-9}
@@ -62,7 +62,7 @@ INTCTRL & 0x0004 & INTLVL    & [1:0]  & RW  & false & 'h0  & These b  & 0:Inter;
 \hline
 \textbf{Register} & \textbf{Offset} & \textbf{Field} & \textbf{Bits} & \textbf{Access\_Policy} & \textbf{Volatile} & \textbf{reset} & \textbf{Description} & \textbf{Enum Values} \\ \hline
 \multirow{4}{*}{CTRL2} & \multirow{4}{*}{0x1000} & MODE2     & [1:0]  & RW  & false & 'h1  & Operation mode      & 0:Idle; 1:Run; 2:Sleep \\ \cline{3-9}
-        &        & PRIORITY  & [3:2]  & RW  & false & 'h0  & Priority level      & 0:Low; 1:Med; 2:High    \\ \cline{3-9}
+        &        & PRIORITY2  & [3:2]  & RW  & false & 'h0  & Priority level      & 0:Low; 1:Med; 2:High    \\ \cline{3-9}
         &        & ENABLE2   & [4]    & RW  & false & 'h0  & Enable block        &                         \\ \cline{3-9}
         &        & RESETN    & [5]    & RW  & true  & 'h1  & Active-low reset    &                         \\ \hline
 CFG     & 0x1004 & CLOCKDIV  & [7:0]  & RW  & false & 'h2  & Clock divider       &                         \\ \hline
