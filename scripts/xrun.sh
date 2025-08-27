@@ -124,7 +124,7 @@ main() {
         export RUN_GUI=0  # Disable GUI mode (run in batch mode)
     fi
 
-    xsim top_sim ${VIVADO_PARMS} --testplusarg UVM_TESTNAME=${TEST_NAME} --tclbatch ../bin/save_wave.tcl
+    xsim top_sim ${VIVADO_PARMS} --testplusarg UVM_TESTNAME=${TEST_NAME} --tclbatch ../scripts/save_wave.tcl
 }
 
 main "$@"
