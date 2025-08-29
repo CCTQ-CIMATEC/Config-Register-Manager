@@ -1,5 +1,5 @@
 module apb4_slave #(
-    parameter ADDR_WIDTH = 3,
+    parameter ADDR_WIDTH = 4,
     parameter DATA_WIDTH = 32
 )(
     Bus2Reg_intf intf,
@@ -18,8 +18,16 @@ module apb4_slave #(
     apb_state_t current_state, next_state;
 
     logic transaction_complete;
-    logic write_enable;  
-    // lógica de próximo estado
+
+    // Registradores para capturar sinais no ACCESS
+    logic [ADDR_WIDTH-1:0] addr_reg;
+    logic [DATA_WIDTH-1:0] wdata_reg;
+    logic                  write_reg;
+    logic                  capture_signals;
+
+    //--------------------------------------------------------------------------
+    // Lógica de próximo estado
+    //--------------------------------------------------------------------------
     always_comb begin
         case (current_state)
             IDLE: begin
@@ -61,6 +69,27 @@ module apb4_slave #(
     end
 
     //--------------------------------------------------------------------------
+    // Sinal para capturar no início do ACCESS
+    //--------------------------------------------------------------------------
+    assign capture_signals = (current_state == SETUP) && (next_state == ACCESS);
+
+    //--------------------------------------------------------------------------
+    // Captura de sinais na transição SETUP -> ACCESS
+    //--------------------------------------------------------------------------
+    always_ff @(posedge intf.clk or posedge intf.rst) begin
+        if (intf.rst) begin
+            addr_reg  <= '0;
+            wdata_reg <= '0;
+            write_reg <= 1'b0;
+        end else if (capture_signals) begin
+            // Captura os sinais quando entramos no estado ACCESS
+            addr_reg  <= s_apb4.paddr;
+            wdata_reg <= s_apb4.pwdata;
+            write_reg <= s_apb4.pwrite;
+        end
+    end
+
+    //--------------------------------------------------------------------------
     // Lógica Combinacional para Saídas
     //--------------------------------------------------------------------------
     always_comb begin
@@ -71,13 +100,20 @@ module apb4_slave #(
         intf.bus_wr_data    = '0;
         intf.bus_wr_biten   = '0;
 
-        // logica baseada no estado atual
+        // usa valores registrados quando no estado ACCESS
         if (current_state == ACCESS) begin
             intf.bus_req       = 1'b1;
-            intf.bus_req_is_wr = write_enable; 
-            intf.bus_addr      = s_apb4.paddr;  
-            intf.bus_wr_data   = s_apb4.pwdata;
-            // intf.o_bus_wr_biten pode precisar ser ajustado conforme necessário.
+            intf.bus_req_is_wr = write_reg; 
+            intf.bus_addr      = addr_reg;  
+            intf.bus_wr_data   = wdata_reg;
+            
+            // CORREÇÃO: bus_wr_biten agora é [3:0] (4 bits para byte enable)
+        
+            if (write_reg) begin
+                intf.bus_wr_biten = 4'b1111; 
+            end else begin
+                intf.bus_wr_biten = 4'b0000; 
+            end
         end
     end
 

@@ -12,7 +12,8 @@ interface Bus2Reg_intf
    logic bus_req_is_wr;
    logic [ADDR_WIDTH-1:0] bus_addr;
    logic [DATA_WIDTH-1:0] bus_wr_data;
-   logic [DATA_WIDTH-1:0] bus_wr_biten;
+   // CORREÇÃO: bus_wr_biten deve ser byte enable (4 bits para 32-bit data)
+   logic [DATA_WIDTH/8-1:0] bus_wr_biten;  
    logic bus_req_stall_wr;
    logic bus_req_stall_rd;
 
