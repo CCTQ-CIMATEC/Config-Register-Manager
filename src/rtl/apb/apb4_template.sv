@@ -1,5 +1,5 @@
 module apb4_slave #(
-    parameter ADDR_WIDTH = 4,
+    parameter ADDR_WIDTH = 3,
     parameter DATA_WIDTH = 32
 )(
     Bus2Reg_intf intf,
@@ -26,7 +26,7 @@ module apb4_slave #(
     logic                  capture_signals;
 
     //--------------------------------------------------------------------------
-    // Lógica de próximo estado
+    // logica de próximo estado
     //--------------------------------------------------------------------------
     always_comb begin
         case (current_state)
@@ -57,11 +57,11 @@ module apb4_slave #(
         endcase
     end
 
-    //--------------------------------------------------------------------------
-    // State Register
-    //--------------------------------------------------------------------------
-    always_ff @(posedge intf.clk or posedge intf.rst) begin
-        if (intf.rst) begin
+    //------------
+    // state reg
+    //-------------
+    always_ff @(posedge intf.clk or negedge intf.rst) begin
+        if (!intf.rst) begin
             current_state <= IDLE;
         end else begin
             current_state <= next_state;
@@ -69,15 +69,15 @@ module apb4_slave #(
     end
 
     //--------------------------------------------------------------------------
-    // Sinal para capturar no início do ACCESS
+    // sinal para capturar no começo do ACCESS
     //--------------------------------------------------------------------------
     assign capture_signals = (current_state == SETUP) && (next_state == ACCESS);
 
     //--------------------------------------------------------------------------
-    // Captura de sinais na transição SETUP -> ACCESS
+    // captura de sinais na transição SETUP -> ACCESS
     //--------------------------------------------------------------------------
-    always_ff @(posedge intf.clk or posedge intf.rst) begin
-        if (intf.rst) begin
+    always_ff @(posedge intf.clk or negedge intf.rst) begin
+        if (!intf.rst) begin
             addr_reg  <= '0;
             wdata_reg <= '0;
             write_reg <= 1'b0;
@@ -90,7 +90,7 @@ module apb4_slave #(
     end
 
     //--------------------------------------------------------------------------
-    // Lógica Combinacional para Saídas
+    // comb logical para saida
     //--------------------------------------------------------------------------
     always_comb begin
         // valores padrão para evitar latches
@@ -107,7 +107,7 @@ module apb4_slave #(
             intf.bus_addr      = addr_reg;  
             intf.bus_wr_data   = wdata_reg;
             
-            // CORREÇÃO: bus_wr_biten agora é [3:0] (4 bits para byte enable)
+            // será?: bus_wr_biten agora é 4b (4 bits para byte enable)
         
             if (write_reg) begin
                 intf.bus_wr_biten = 4'b1111; 
@@ -118,19 +118,19 @@ module apb4_slave #(
     end
 
     //--------------------------------------------------------------------------
-    // Transaction Completion
+    // completar tansição 
     //--------------------------------------------------------------------------
     assign transaction_complete = (intf.bus_ready);
 
     //--------------------------------------------------------------------------
-    // APB Response Signals
+    // sinais de resposta apb4
     //--------------------------------------------------------------------------
     assign s_apb4.pready  = (current_state == ACCESS) ? transaction_complete : 1'b0;
     assign s_apb4.prdata  = (current_state == ACCESS) ? intf.bus_rd_data : '0;
     assign s_apb4.pslverr = (current_state == ACCESS) ? intf.bus_err : 1'b0;
 
     //--------------------------------------------------------------------------
-    // Stall signals
+    // sinais stall
     //--------------------------------------------------------------------------
     assign intf.bus_req_stall_wr = 1'b0;
     assign intf.bus_req_stall_rd = 1'b0;

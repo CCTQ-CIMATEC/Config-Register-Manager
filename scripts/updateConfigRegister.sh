@@ -84,10 +84,8 @@ if [ "$CLEAN_FLAG" = true ]; then
 fi
 
 echo "Etapa 0: Verificando/Criando estrutura de diretórios..."
-# Criar diretório build principal se não existir
 mkdir -p "${BUILD_DIR}"
 
-# Criar subdiretórios dentro de build se não existirem
 for subdir in "csv" "rtl" "ipxact"; do
     dir_path="${BUILD_DIR}/${subdir}"
     if [ ! -d "${dir_path}" ]; then
@@ -111,7 +109,7 @@ if ! python3 scripts/csv2ipxact.py -s "${BUS_WIDTH}"; then
 fi
 
 echo "Etapa 3: Gerando RTL a partir do IP-XACT..."
-if ! scripts/ipxact2rtl.sh; then
+if ! bash scripts/ipxact2rtl.sh; then
     error_exit "IP-XACT para RTL"
 fi
 
@@ -120,9 +118,13 @@ if ! python3 scripts/gen_bus_csr.py --bus "${BUS_PROTOCOL}" --data-width "${BUS_
     error_exit "Generate bus logic"
 fi
 
-echo "Etapa 5: Integração com vivado"
+echo "Etapa 5: Integração com Vivado"
+# ⚠️ No Windows, esse path não existe. 
+# Se você tiver Vivado instalado em C:/Xilinx, ajuste o caminho abaixo.
+if [ -f "/opt/Xilinx/Vitis/2024.1/settings64.sh" ]; then
+    source /opt/Xilinx/Vitis/2024.1/settings64.sh
+fi
 
-source /opt/Xilinx/Vitis/2024.1/settings64.sh
-./scripts/xrun.sh -top ${BUS_PROTOCOL}_tb -vivado "--g"
+bash ./scripts/xrun.sh -top ${BUS_PROTOCOL}_tb -vivado "--g"
 
 echo "✅ Pipeline concluído com sucesso!"

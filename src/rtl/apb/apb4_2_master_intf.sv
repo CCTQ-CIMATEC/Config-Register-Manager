@@ -61,18 +61,18 @@ interface Bus2Master_intf #(
     //--------------------------------------------------------------------------
     // Modport for Passive Monitoring
     //--------------------------------------------------------------------------
-    modport monitor (
-        input psel, penable, pwrite, paddr, pwdata, prdata, pready, pslverr,
-        input pclk, presetn
-    );
+    // modport monitor (
+    //     input psel, penable, pwrite, paddr, pwdata, prdata, pready, pslverr,
+    //     input pclk, presetn
+    // );
 
     //--------------------------------------------------------------------------
     // Assertions for APB4 Protocol Checking
     //--------------------------------------------------------------------------
-    property apb4_setup_phase;
-        @(posedge pclk) disable iff (!presetn)
-        (psel && !penable) |=> (psel && penable);
-    endproperty
+    // property apb4_setup_phase;
+    //     @(posedge pclk) disable iff (!presetn)
+    //     (psel && !penable) |=> (psel && penable);
+    // endproperty
 /*
     property apb4_valid_transaction;
         @(posedge pclk) disable iff (!presetn)
@@ -122,37 +122,37 @@ interface Bus2Master_intf #(
         apb4_cg = new();
     end
 */
-    //--------------------------------------------------------------------------
-    // Reset Behavior
-    //--------------------------------------------------------------------------
-    always @(negedge presetn) begin
-        if (!presetn) begin
-            // Reset values
-            psel    <= 1'b0;
-            penable <= 1'b0;
-            pwrite  <= 1'b0;
-            paddr   <= '0;
-            pwdata  <= '0;
-            prdata  <= '0;
-            pready  <= 1'b0;
-            pslverr <= 1'b0;
-        end
-    end
+    // //--------------------------------------------------------------------------
+    // // Reset Behavior
+    // //--------------------------------------------------------------------------
+    // always @(negedge presetn) begin
+    //     if (!presetn) begin
+    //         // Reset values
+    //         psel    <= 1'b0;
+    //         penable <= 1'b0;
+    //         pwrite  <= 1'b0;
+    //         paddr   <= '0;
+    //         pwdata  <= '0;
+    //         prdata  <= '0;
+    //         pready  <= 1'b0;
+    //         pslverr <= 1'b0;
+    //     end
+    // end
 
     //--------------------------------------------------------------------------
     // Utility Functions
     //--------------------------------------------------------------------------
-    function string get_state();
-        if (!psel && !penable) return "IDLE";
-        if (psel && !penable) return "SETUP";
-        if (psel && penable) return "ACCESS";
-        return "UNKNOWN";
-    endfunction
+    // function string get_state();
+    //     if (!psel && !penable) return "IDLE";
+    //     if (psel && !penable) return "SETUP";
+    //     if (psel && penable) return "ACCESS";
+    //     return "UNKNOWN";
+    // endfunction
 
-    function void display_transaction();
-        $display("[%0t] APB4 State: %s, PWRITE: %b, PADDR: 0x%h, PWDATA: 0x%h, PRDATA: 0x%h, PREADY: %b, PSLVERR: %b",
-                 $time, get_state(), pwrite, paddr, pwdata, prdata, pready, pslverr);
-    endfunction
+    // function void display_transaction();
+    //     $display("[%0t] APB4 State: %s, PWRITE: %b, PADDR: 0x%h, PWDATA: 0x%h, PRDATA: 0x%h, PREADY: %b, PSLVERR: %b",
+    //              $time, get_state(), pwrite, paddr, pwdata, prdata, pready, pslverr);
+    // endfunction
 
 endinterface
 

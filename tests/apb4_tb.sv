@@ -72,10 +72,10 @@ module apb4_tb;
     // Reset Generation
     //--------------------------------------------------------------------------
     initial begin
-        rst = 1;
-        #(CLK_PERIOD * 2);
         rst = 0;
-        #(CLK_PERIOD);
+        #(CLK_PERIOD * 2);
+        rst = 1;
+        
     end
 
     //--------------------------------------------------------------------------
@@ -225,7 +225,7 @@ module apb4_tb;
         s_apb4.master_cb.pwdata  <= '0;
         
         // Wait for reset to complete
-        wait(rst == 0);
+        wait(rst == 1);
         #(CLK_PERIOD * 2);
         
         $display("==========================================");
